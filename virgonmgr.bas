@@ -1,50 +1,49 @@
+
 REM Panel Virgon
 
-$CONSOLE:ONLY
+    $CONSOLE:ONLY
+        declare sub Path_read(idfile$,path$)
 
 Panel_menu:
+
     CLS
     LOCATE 1, 1: PRINT "Master panel controll of server VIRGON (R)"
     LOCATE 2, 1: PRINT "Created by Maciej Mirota"
     PRINT "------------------------------------------------------------------------"
-    PRINT "|F1-------> Network configuration                                      |"
-    PRINT "|F2-------> Servers configuration                                      |"
-    PRINT "|F3-------> Add software                                               |"
-    PRINT "|F4-------> Configuration add software                                 |"
-    PRINT "|F5-------> Router functions                                           |"
-    PRINT "|F6-------> Configure path to file or directory                        |"
-    PRINT "|F10------> Exit to shell                                              |"
+    PRINT "|1-------> Network configuration                                      |"
+    PRINT "|2-------> Servers configuration                                      |"
+    PRINT "|3-------> Add software                                               |"
+    PRINT "|4-------> Configuration add software                                 |"
+    PRINT "|5-------> Router functions                                           |"
+    PRINT "|6-------> Configure path to file or directory                        |"
+    PRINT "|0-------> Exit to shell                                              |"
     PRINT "------------------------------------------------------------------------"
 
-    Menu_key:
-        ON KEY(1) GOSUB Net_menu
-        ON KEY(2) GOSUB Serv_menu
-        ON KEY(3) GOSUB Add_menu
-        ON KEY(4) GOSUB Conf_add_menu
-        ON KEY(5) GOSUB Router_menu
-        ON KEY(6) GOSUB Config_path
-        ON KEY(10) End
-            GOTO Menu_key
+    Menu1:
+        INPUT "Select function and press ENTER", m1$
+
+            IF m1$ = "1" THEN GOTO Net_menu
+            IF m1$ = "2" THEN GOTO Serv_menu
+            IF m1$ = "3" THEN GOTO Add_menu
+            IF m1$ = "4" THEN GOTO Conf_add_menu
+            IF m1$ = "5" THEN GOTO Router_menu
+            IF m1$ = "6" THEN GOTO Config_path
+            IF m1$ = "0" THEN END
+        GOTO Menu1
 
 Net_menu:
+
 CLS
+
 PRINT "----------------------------------------------------------------------"
 PRINT "|F1----> Add card to system                                           |"
 PRINT "|F2----> Configuration network card                                   |"
 PRINT "|F3----> Configuration hamachi VPN network card                       |"
 PRINT "|F4----> Configuration DNS server                                     |"
 PRINT "|F5----> MAC adress setings for network card                          |"
+PRINT "|6-----> Show aktual configuration                                    |"
 PRINT "|F10---> Back to master menu                                          |"
-PRINT "----------------------------------------------------------------------"
-PRINT "|Actual configuration system:                                        |"
-PRINT "----------------------------------------------------------------------"
-PRINT "|NetCard   name :                MAC :                               |"
-PRINT "|IP adress :                                                         |"
-PRINT "|Network mask :                   Getway :                           |"
-PRINT "|DNS master :                     DNS slave :                        |"
-PRINT "|--------------------------------------------------------------------|"
-PRINT "|to change aktual config press <>                                    |"
-PRINT "----------------------------------------------------------------------"
+PRINT "|---------------------------------------------_-----------------------|"
 
 
 END
@@ -59,8 +58,7 @@ PRINT "|4----> Configure Samba server                                       |"
 PRINT "|5----> Configure MySQL server                                       |"
 PRINT "|0----> Back to Master menu                                          |"
 PRINT "----------------------------------------------------------------------"
-
-GOTO Panel_menu
+END
 
 Add_menu:
 CLS
@@ -72,7 +70,7 @@ PRINT "|4----> Add Zoneminder - CCTV IP network video recorder              |"
 PRINT "|5----> Add Hamachi VPN                                              |"
 PRINT "|0----> Back to master menu                                          |"
 PRINT "----------------------------------------------------------------------"
-
+   END
 
 Conf_add_menu:
 CLS
@@ -83,7 +81,7 @@ PRINT "|3----> Hamachi VPN configuration                                    |"
 PRINT "|4----> MotionEye configuration                                      |"
 PRINT "|0----> Back to master menu                                          |"
 PRINT "----------------------------------------------------------------------"
-
+      END
 
 Router_menu:
 CLS
@@ -97,7 +95,7 @@ PRINT "|6----> Configure port forwarding/virtual servers                    |"
 PRINT "|7----> Configure droping/access port to external NetCard/VPN        |"
 PRINT "|0----> Back to master menu                                          |"
 PRINT "----------------------------------------------------------------------"
-
+         END
 Config_path:
 END
 
@@ -121,3 +119,6 @@ SUB Path_read (idfile$, path$):
 
 end_sub_1:
 END SUB
+
+
+
