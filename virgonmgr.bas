@@ -104,10 +104,10 @@ PRINT "|---------------------------------------------------------------------|"
                                Add_process_save:
                                     CLOSE #1
                                     CLOSE #2
-                                    idfile$ = "card_file"
+                                    idfile$ = "card_file_tmp"
                                     CALL Path_read(idfile$, path$)
                                     OPEN path$ FOR OUTPUT AS #1
-                                    idfile$ = "card_file_tmp"
+                                    idfile$ = "card_file"
                                     CALL Path_read(idfile$, path$)
                                     OPEN path$ FOR INPUT AS #2
                                     
@@ -130,7 +130,10 @@ PRINT "|---------------------------------------------------------------------|"
                                     PRINT "-------------------------------------------"
                                     CLOSE #1
                                     CLOSE #2
-                                        GOTO Add_menu_list
+                                    idfile$ = "card_data_tmp"
+                                    call path_read (idfile$,path$)
+                                    kill path$
+                                    	GOTO Add_menu_list
 
 
 
