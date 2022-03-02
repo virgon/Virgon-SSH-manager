@@ -35,16 +35,113 @@ Net_menu:
 
 CLS
 
-PRINT "----------------------------------------------------------------------"
-PRINT "|F1----> Add card to system                                           |"
-PRINT "|F2----> Configuration network card                                   |"
-PRINT "|F3----> Configuration hamachi VPN network card                       |"
-PRINT "|F4----> Configuration DNS server                                     |"
-PRINT "|F5----> MAC adress setings for network card                          |"
-PRINT "|6-----> Show aktual configuration                                    |"
-PRINT "|F10---> Back to master menu                                          |"
-PRINT "|---------------------------------------------_-----------------------|"
+PRINT "-----------------------------------------------------------------------"
+PRINT "|1----> Add card to system                                            |"
+PRINT "|2----> Configuration network card                                    |"
+PRINT "|3----> Configuration hamachi VPN network card                        |"
+PRINT "|4----> Configuration DNS adress                                      |"
+PRINT "|5----> MAC adress setings for network card                           |"
+PRINT "|6----> Show aktual configuration                                     |"
+PRINT "|0----> Back to master menu                                           |"
+PRINT "|---------------------------------------------------------------------|"
 
+    Menu2:
+        INPUT "Select function and press ENTER", m2$
+
+            IF m2$ = "1" THEN GOTO Add_card
+            IF m2$ = "2" THEN GOTO Conf_card
+            IF m2$ = "3" THEN GOTO Hamachi_vpn
+            IF m2$ = "4" THEN GOTO Conf_DNS
+            IF m2$ = "5" THEN GOTO Conf_MAC
+            IF m2$ = "6" THEN GOTO Actual_config
+            IF m2$ = "0" THEN GOTO Menu1
+        GOTO Menu2
+
+                Add_card:
+                    CLS
+                    	Add_menu_list:
+                    		PRINT "-----------------------------------------------------------------------------"
+                    		PRINT "|1---->Add new network card                                                 |"
+                    		PRINT "|2---->Remove network card                                                  |"
+                    		PRINT "|0---->Back to Network Menu                                                 |"
+                    		PRINT "-----------------------------------------------------------------------------"
+                       			Menu21:
+                            			INPUT "Select functionand press ENTER", m21$
+                                			IF m21$ = "1" THEN GOTO Add_card_sys
+                                			IF m21$ = "2" THEN GOTO Remove_card_sys
+                                			IF m21$ = "0" THEN GOTO Menu1
+                                    				GOTO Menu21
+
+                            Add_card_sys:
+                            CLS
+                            PRINT "--------------------------------------------------------"
+                            PRINT "|Enter card name (mynet, WAN, LAN, etc):               |"
+                            PRINT "--------------------------------------------------------"
+                                INPUT ">", card_name$
+                            PRINT "--------------------------------------------------------"
+                            PRINT "|Enter card alias (card0, card1, etc):                 |"
+                            PRINT "--------------------------------------------------------"
+                                INPUT ">", card_alias$
+                            PRINT "--------------------------------------------------------"
+                            PRINT "|Enter card system name (eth0,wlan0,enp1s0, etc):      |"
+                            PRINT "--------------------------------------------------------"
+                                INPUT ">", card_sys_id$
+					
+				Add_process_read:
+					idfile$ ="card_file"
+                                	call path_read(idfile$,path$)
+                                	open path$ for input as #1
+                                      	on error goto Add_save_data
+                                	idfile$ ="card_file_tmp"
+                                	call path_read(idfile$,path$)
+                                	open path$ for output as #2
+                                	
+                                		Add_read_data_card:
+                                			input #1,card_name$,card_alias$,card_sys_id$
+                                			if eof then goto Add_save_data
+                                			print #2, card_name$, card_alias$,card_sys_id$
+                                				goto Add_read_data_card
+                               Add_process_save:
+                                	close #1
+                                	close #2
+                                	idfile$="card_file"
+                                	call path_read (idfile$,path$)
+                                	open path$ for output as #1
+                                	idfile$="card_file_tmp"
+                                	call path_read (idfile$,pa th$)
+                                	open path$ for input as #2
+                                	
+                                		Add_save_data_card:
+                                			input #1,card_name$,card_alias$,card_sys_id$
+                                			if eof then goto Add_process_end
+                                			print #2, card_name$, card_alias$,card_sys_id$	
+                                				goto Add_save_data_card
+                                				
+                                Add_process_first_save:
+                                	idfile$="card_file"
+                                	call path_read (idfile$,path$)
+                                	open path$ for output as #1
+                                	print #1, card_name$, card_alias$,card_sys_id$
+                                
+                                Add_process_end:
+                                	cls
+                                	print "-------------------------------------------"
+                                	print "|Save data on system is successful        |"
+                                	print "-------------------------------------------"
+                                	close #1
+                                	close #2
+                                		goto Add_menu_list
+
+
+
+
+                            Remove_card_sys:
+
+                Conf_card:
+                Hamachi_vpn:
+                Conf_DNS:
+                Conf_MAC:
+                Actual_config:
 
 END
 
