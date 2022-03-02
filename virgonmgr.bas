@@ -59,18 +59,18 @@ PRINT "|---------------------------------------------------------------------|"
 
                 Add_card:
                     CLS
-                    	Add_menu_list:
-                    		PRINT "-----------------------------------------------------------------------------"
-                    		PRINT "|1---->Add new network card                                                 |"
-                    		PRINT "|2---->Remove network card                                                  |"
-                    		PRINT "|0---->Back to Network Menu                                                 |"
-                    		PRINT "-----------------------------------------------------------------------------"
-                       			Menu21:
-                            			INPUT "Select functionand press ENTER", m21$
-                                			IF m21$ = "1" THEN GOTO Add_card_sys
-                                			IF m21$ = "2" THEN GOTO Remove_card_sys
-                                			IF m21$ = "0" THEN GOTO Menu1
-                                    				GOTO Menu21
+                        Add_menu_list:
+                            PRINT "-----------------------------------------------------------------------------"
+                            PRINT "|1---->Add new network card                                                 |"
+                            PRINT "|2---->Remove network card                                                  |"
+                            PRINT "|0---->Back to Network Menu                                                 |"
+                            PRINT "-----------------------------------------------------------------------------"
+                                Menu21:
+                                        INPUT "Select functionand press ENTER", m21$
+                                            IF m21$ = "1" THEN GOTO Add_card_sys
+                                            IF m21$ = "2" THEN GOTO Remove_card_sys
+                                            IF m21$ = "0" THEN GOTO Menu1
+                                                    GOTO Menu21
 
                             Add_card_sys:
                             CLS
@@ -86,51 +86,51 @@ PRINT "|---------------------------------------------------------------------|"
                             PRINT "|Enter card system name (eth0,wlan0,enp1s0, etc):      |"
                             PRINT "--------------------------------------------------------"
                                 INPUT ">", card_sys_id$
-					
-				Add_process_read:
-					idfile$ ="card_file"
-                                	call path_read(idfile$,path$)
-                                	open path$ for input as #1
-                                      	on error goto Add_save_data
-                                	idfile$ ="card_file_tmp"
-                                	call path_read(idfile$,path$)
-                                	open path$ for output as #2
-                                	
-                                		Add_read_data_card:
-                                			input #1,card_name$,card_alias$,card_sys_id$
-                                			if eof then goto Add_save_data
-                                			print #2, card_name$, card_alias$,card_sys_id$
-                                				goto Add_read_data_card
+                    
+                Add_process_read:
+                                    idfile$ = "card_file"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR INPUT AS #1
+                                    ON ERROR GOTO Add_process_first_save
+                                    idfile$ = "card_file_tmp"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR OUTPUT AS #2
+                                    
+                                        Add_read_data_card:
+                                            INPUT #1, card_name$, card_alias$, card_sys_id$
+                                            IF EOF(1) THEN GOTO Add_process_first_save
+                                            PRINT #2, card_name$, card_alias$, card_sys_id$
+                                                GOTO Add_read_data_card
                                Add_process_save:
-                                	close #1
-                                	close #2
-                                	idfile$="card_file"
-                                	call path_read (idfile$,path$)
-                                	open path$ for output as #1
-                                	idfile$="card_file_tmp"
-                                	call path_read (idfile$,pa th$)
-                                	open path$ for input as #2
-                                	
-                                		Add_save_data_card:
-                                			input #1,card_name$,card_alias$,card_sys_id$
-                                			if eof then goto Add_process_end
-                                			print #2, card_name$, card_alias$,card_sys_id$	
-                                				goto Add_save_data_card
-                                				
+                                    CLOSE #1
+                                    CLOSE #2
+                                    idfile$ = "card_file"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR OUTPUT AS #1
+                                    idfile$ = "card_file_tmp"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR INPUT AS #2
+                                    
+                                        Add_save_data_card:
+                                            INPUT #1, card_name$, card_alias$, card_sys_id$
+                                            IF EOF(1) THEN GOTO Add_process_end
+                                            PRINT #2, card_name$, card_alias$, card_sys_id$
+                                                GOTO Add_save_data_card
+                                                
                                 Add_process_first_save:
-                                	idfile$="card_file"
-                                	call path_read (idfile$,path$)
-                                	open path$ for output as #1
-                                	print #1, card_name$, card_alias$,card_sys_id$
+                                    idfile$ = "card_file"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR OUTPUT AS #1
+                                    PRINT #1, card_name$, card_alias$, card_sys_id$
                                 
                                 Add_process_end:
-                                	cls
-                                	print "-------------------------------------------"
-                                	print "|Save data on system is successful        |"
-                                	print "-------------------------------------------"
-                                	close #1
-                                	close #2
-                                		goto Add_menu_list
+                                    CLS
+                                    PRINT "-------------------------------------------"
+                                    PRINT "|Save data on system is successful        |"
+                                    PRINT "-------------------------------------------"
+                                    CLOSE #1
+                                    CLOSE #2
+                                        GOTO Add_menu_list
 
 
 
