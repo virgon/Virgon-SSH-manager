@@ -34,7 +34,7 @@ Panel_menu:
 Net_menu:
 
 CLS
-
+Net_menu_list:
 PRINT "-----------------------------------------------------------------------"
 PRINT "|1----> Add card to system                                            |"
 PRINT "|2----> Configuration network card                                    |"
@@ -83,16 +83,16 @@ PRINT "|---------------------------------------------------------------------|"
                             PRINT "--------------------------------------------------------"
                                 INPUT ">", card_alias$
                             PRINT "--------------------------------------------------------"
-                            PRINT "|Enter card system name (eth0,wlan0,enp1s0, etc):      |"
+                            PRINT "|Enter card system id   (eth0,wlan0,enp1s0, etc):      |"
                             PRINT "--------------------------------------------------------"
                                 INPUT ">", card_sys_id$
                     
-                Add_process_read:
-                                    idfile$ = "card_file"
+                        Add_process_read:
+                                    idfile$ = "card_data"
                                     CALL Path_read(idfile$, path$)
                                     OPEN path$ FOR INPUT AS #1
                                     ON ERROR GOTO Add_process_first_save
-                                    idfile$ = "card_file_tmp"
+                                    idfile$ = "card_data_tmp"
                                     CALL Path_read(idfile$, path$)
                                     OPEN path$ FOR OUTPUT AS #2
                                     
@@ -104,7 +104,7 @@ PRINT "|---------------------------------------------------------------------|"
                                Add_process_save:
                                     CLOSE #1
                                     CLOSE #2
-                                    idfile$ = "card_file_tmp"
+                                    idfile$ = "card_data_tmp"
                                     CALL Path_read(idfile$, path$)
                                     OPEN path$ FOR OUTPUT AS #1
                                     idfile$ = "card_file"
@@ -118,7 +118,9 @@ PRINT "|---------------------------------------------------------------------|"
                                                 GOTO Add_save_data_card
                                                 
                                 Add_process_first_save:
-                                    idfile$ = "card_file"
+                                    CLOSE #1
+                                    CLOSE #2
+                                    idfile$ = "card_data"
                                     CALL Path_read(idfile$, path$)
                                     OPEN path$ FOR OUTPUT AS #1
                                     PRINT #1, card_name$, card_alias$, card_sys_id$
@@ -131,15 +133,89 @@ PRINT "|---------------------------------------------------------------------|"
                                     CLOSE #1
                                     CLOSE #2
                                     idfile$ = "card_data_tmp"
-                                    call path_read (idfile$,path$)
-                                    kill path$
-                                    	GOTO Add_menu_list
-
-
+                                    CALL Path_read(idfile$, path$)
+                                    KILL path$
+                                        GOTO Add_menu_list
 
 
                             Remove_card_sys:
-
+                                CLS
+                                PRINT "----------------------------------------------"
+                                PRINT "|Enter name card to remove                   |"
+                                PRINT "----------------------------------------------"
+                                INPUT ">", name_remove_card$
+                                PRINT "----------------------------------------------"
+                                PRINT "|Enter system id card to remove              |"
+                                PRINT "----------------------------------------------"
+                                INPUT ">", id_remove_card$
+                                COLOR 7
+                                PRINT "-----------------------------------------------"
+                                PRINT "|Are you sure to remove this card from system |"
+                                PRINT "|               (yes/no)                      |"
+                                PRINT "-----------------------------------------------"
+                                INPUT ">", remove_card_decision$
+                
+                                Remove_card_decision:
+                                    IF remove_card_decision$ = "no" OR remove_card_decision$ = "n" THEN GOTO Menu1
+                                    IF remove_card_decision$ = "yes" OR remove_card_decision$ = "y" THEN GOTO Remove_card
+                                    IF remove_card_decision$ <> "no" OR remove_card_decision$ <> "yes" THEN GOTO Menu1
+                                    IF remove_card_decision$ <> "n" OR remove_card_decision$ <> "y" THEN GOTO Menu1
+                                        GOTO Remove_card_decision
+                            
+                    Remove_card:
+                    CLS
+                    COLOR 7
+                    PRINT "----------------------------------------------------"
+                    PRINT "|Network card removed from system                  |"
+                    PRINT "----------------------------------------------------"
+                    
+                        Removed_card_read:
+                            idfile$ = "card_data"
+                            CALL Path_read(idfile$, path$)
+                            OPEN path$ FOR INPUT AS #1
+                            idfile$ = "card_data_tmp"
+                            CALL Path_read(idfile$, path$)
+                            OPEN path$ FOR OUTPUT AS #2
+                            
+                                Remove_procedure_read:
+                                    INPUT #1, card_name$, card_alias$, card_sys_id$
+                                    IF EOF(1) THEN GOTO Remove_save_data_file
+                                    IF card_name$ = name_remove_card$ AND card_sys_id$ = id_remove_card$ THEN GOTO Remove_procedure_read
+                                    IF card_name$ <> name_remove_card$ AND card_sys_id$ = card_sys_id$ THEN GOTO Remove_card_save_tmp
+                                    IF card_name$ = name_remove_card$ AND card_sys_id$ <> card_sys_id$ THEN GOTO Remove_card_save_tmp
+                                    IF card_name$ <> name_remove_card$ AND card_sys_id$ <> card_sys_id$ THEN GOTO Remove_card_save_tmp
+                                        GOTO Remove_procedure_read
+                                        
+                                Remove_card_save_tmp:
+                                    PRINT #2, card_name$, card_alias$, card_sys_id$
+                                        GOTO Remove_procedure_read
+                                        
+                                Remove_save_data_file:
+                                    CLOSE #1
+                                    CLOSE #2
+                                    idfile$ = "card_data"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR OUTPUT AS #1
+                                    idfile$ = "card_data_tmp"
+                                    CALL Path_read(idfile$, path$)
+                                    OPEN path$ FOR INPUT AS #2
+                                    
+                                    Remove_procedure_save:
+                                        INPUT #2, card_name$, card_alias$, card_sys_id$
+                                        IF EOF(2) THEN GOTO Remove_card_complite
+                                        PRINT #1, card_name$, card_alias$, card_sys_id$
+                                            GOTO Remove_procedure_save
+                                            
+                                Remove_card_complite:
+                                    PRINT "------------------------------------------------------"
+                                    PRINT "|Remove data complete                                 "
+                                    PRINT "------------------------------------------------------"
+                                    CLOSE #1
+                                    CLOSE #2
+                                    idfile$ = "card_data_tmp"
+                                    CALL Path_read(idfile$, path$)
+                                    KILL path$
+                                    GOTO Net_menu_list
                 Conf_card:
                 Hamachi_vpn:
                 Conf_DNS:
@@ -200,12 +276,13 @@ Config_path:
 END
 
 SUB Path_read (idfile$, path$):
-    OPEN "pathdata.pth" FOR INPUT AS #1
+    CLOSE #5
+    OPEN "pathdata.pth" FOR INPUT AS #5
 
     Patch_read_from_file:
-        INPUT #1, idfiler$, path$
+        INPUT #5, idfiler$, path$
         IF idfile$ = idfiler$ THEN GOTO PR_set
-        IF EOF(1) THEN GOTO Error_file
+        IF EOF(5) THEN GOTO Error_file
         IF idfile$ <> idfiler$ THEN GOTO Patch_read_from_file
 
     Error_file:
@@ -216,7 +293,9 @@ SUB Path_read (idfile$, path$):
 
     PR_set:
     LET pather$ = path$
-
+    CLOSE #5
+    GOTO end_sub_1
+    
 end_sub_1:
 END SUB
 
